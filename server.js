@@ -6,11 +6,7 @@ const { Pool } = require("pg");
 const Joi = require("joi");
 
 const app = express();
-app.use(cors({
-  origin: "http://localhost:3000",
-  methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type"]
-}));
+app.use(cors());
 app.use(bodyParser.json());
 
 // PostgreSQL connection
