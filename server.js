@@ -29,6 +29,11 @@ const formValidationSchema = Joi.object({
   orgType: Joi.string().required()
 });
 
+app.get('/', async (req,res) => {
+  return res.json({ message: "Hello World!"});
+});
+
+
 // POST endpoint
 app.post("/submit-form", async (req, res) => {
   console.log(req.body);
