@@ -25,6 +25,7 @@ const formValidationSchema = Joi.object({
   orgType: Joi.string().required()
 });
 
+
 app.get('/', async (req,res) => {
   return res.json({ message: "Hello World!"});
 });
@@ -32,7 +33,8 @@ app.get('/', async (req,res) => {
 
 // POST endpoint
 app.post("/submit-form", async (req, res) => {
-  console.log(req.body);
+
+  // Data Validation of Request
   const { error } = formValidationSchema.validate(req.body);
   if (error) {
     return res.status(400).json({ error: error.details[0].message });
@@ -40,18 +42,24 @@ app.post("/submit-form", async (req, res) => {
 
   const { aadhaarNumber, aadhaarName, panNumber, panName, dobAsPerPan, orgType } = req.body;
 
+
   const [day, month, year] = dobAsPerPan.split('/');
   const formattedDob = `${year}-${month}-${day}`; 
+
 
   try {
     const query = `
       INSERT INTO "udyamFormSubmissions" (aadhaar_number, aadhaar_name, pan_number, pan_name, dob_pan, org_type)
       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;
     `;
+
+
     const values = [aadhaarNumber, aadhaarName, panNumber, panName, formattedDob || null, orgType];
     const result = await pool.query(query, values);
 
+
     res.status(201).json({ message: "Form saved successfully", data: result.rows[0] });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Database insert failed" });
